@@ -3,18 +3,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { BlockModule } from './block/block.module';
 import { Block } from './block/entities/block.entity';
 import { Transaction } from './transaction/entities/transaction.entity';
-import { BlockModule } from './block/block.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    EventEmitterModule.forRoot(),
-    TypeOrmModule.forRoot({
-      name: 'pot',
+  imports: [    
+    TypeOrmModule.forRoot({   
+      // https://stackoverflow.com/questions/52904724/nest-cant-resolve-dependencies-of-the-userrepository
+      // name: 'pot', 
       type: 'sqlite',
       database: 'pot.db',
       //FIXME: Set to  dynamic path like below
@@ -23,6 +21,8 @@ import { BlockModule } from './block/block.module';
       synchronize: true,
       logging: true,
     }),
+    ConfigModule.forRoot(),
+    EventEmitterModule.forRoot(),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -35,12 +35,11 @@ import { BlockModule } from './block/block.module';
           connectTimeout: 1000,
         },
       }),
-    }),
-    // FIXME: Commenting both modules; typeorm is not working correctly
-    // BlockModule,
-    //TransactionModule,
+    }),    
+    BlockModule,
+    TransactionModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

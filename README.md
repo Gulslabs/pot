@@ -25,5 +25,6 @@ npm i merkle
 ```
 ### Bull MQ Setup
 `npm install --save @nestjs/bull bull`
-
+### Redis locally 
+`https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/`
 
