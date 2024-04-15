@@ -12,7 +12,7 @@ import { TransactionController } from './transaction.controller';
     TypeOrmModule.forFeature([Transaction]),
   ],
    providers: [TransactionService, TransactionAggregator],
-  // exports: [TransactionService, TransactionAggregator],
+   exports: [TransactionService],
    controllers: [TransactionController],
 })
 export class TransactionModule {}

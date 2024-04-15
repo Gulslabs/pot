@@ -16,13 +16,13 @@ export class BlockService extends AbstractService{
     private readonly blockProcessor: BlockProcessor
   ) {
     super(blockRepository);
-    this.subscribeToTransactionEvents();
+    this.subscribeToBlockEvents();
   }
 
   /**
    * 
    */
-  subscribeToTransactionEvents() {
+  subscribeToBlockEvents() {
     this.eventEmitter.on('block', ({ block }) => {
          this.consumeBlock(block);
     });
@@ -30,7 +30,7 @@ export class BlockService extends AbstractService{
 
   async consumeBlock(block: BlockDto) {
     const merkleTree = this.blockProcessor.createMekleTree(block);
-    await this.saveBlock(merkleTree.root(), block.blockId.toString());
+    await this.saveBlock(merkleTree.getRoot().toString('hex'), block.blockId.toString());
     await this.blockProcessor.updateBlockTransaction(block, merkleTree);
   }
 
