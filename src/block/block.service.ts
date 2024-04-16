@@ -32,7 +32,7 @@ export class BlockService extends AbstractService {
   async consumeBlock(blockDto: BlockDto) {
     const merkleTree = this.blockProcessor.createMekleTree(blockDto);
     const block = await this.saveBlock(
-      merkleTree,
+      merkleTree.getRoot().toString('hex'),
       blockDto.blockId.toString(),
     );
     await this.blockProcessor.updateBlockTransaction(blockDto, block, merkleTree);
@@ -43,11 +43,11 @@ export class BlockService extends AbstractService {
    * @param merkleRoot
    * @param blockId
    */
-  private async saveBlock(merkleTree: MerkleTree, blockId: string): Promise<Block> {
+  private async saveBlock(root: string, blockId: string): Promise<Block> {
     // Persist block entity
     const blockEntity = this.blockRepository.create({
       blockId: blockId,
-      merkleTree: merkleTree.toString()
+      root: root
     });
     return await this.blockRepository.save(blockEntity);
   }

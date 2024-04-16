@@ -5,7 +5,7 @@ import { Column, Entity } from 'typeorm';
 export class Block extends BaseEntity{ 
   @Column()
   blockId: string;
-  
-  @Column('simple-json')
-  merkleTree: string
+
+  @Column()
+  root: string;
 }

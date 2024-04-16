@@ -30,8 +30,7 @@ export class BlockProcessor {
     merkleTree: any,
   ) {
     for (const transaction of blockDto.transactions) {
-      const proofs = merkleTree.getProof(transaction.leaf);
-
+      const proofs = merkleTree.getProof(transaction.leaf).map(p => p.data.toString('hex'));
       await this.transactionService.update(
         { id: transaction.id },
         { proofs: proofs, block: block},

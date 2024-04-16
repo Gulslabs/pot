@@ -4,7 +4,7 @@ import { TransactionService } from './transation.service';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('pot')
-@Controller('pot')
+@Controller('v1/pot')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
@@ -13,9 +13,9 @@ export class TransactionController {
     await this.transactionService.emitTransaction(transactionDto);
     return 'Transaction emitted successfully';
   }
-  @Get('transactions/:TRANSACTION_ID')
+  @Get('transactions/:TRANSACTION_ID/verify')
   async verifyTransaction(@Param('TRANSACTION_ID') transactionId: string) {
-    await this.transactionService.verifyTransaction(transactionId);
-    return {blockChainStatus: false};
+    const result = await this.transactionService.verifyTransaction(transactionId);
+    return {transactionExists: result};
   }
 }

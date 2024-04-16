@@ -18,7 +18,7 @@ import { TransactionModule } from './transaction/transaction.module';
       // entities: ['dist/**/*.entity.js'],
       entities: [Transaction, Block],
       synchronize: true,
-      logging: true,
+      // logging: true,
     }),
     ConfigModule.forRoot(),
     EventEmitterModule.forRoot(),

@@ -10,8 +10,8 @@ export class Transaction extends BaseEntity {
   @Column()
   leaf: string;
 
-  @Column('simple-json', { nullable: true })
-  proofs: string;
+  @Column('simple-array', {nullable: true}) // Store Merkle proof as an array of strings (hexadecimal)
+  proofs: string[];
   
   @ManyToOne(() => Block, (block) => block.id, { nullable: true })
   block: Block;
