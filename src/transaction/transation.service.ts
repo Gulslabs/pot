@@ -8,6 +8,7 @@ import { Transaction } from './entities/transaction.entity';
 
 @Injectable()
 export class TransactionService extends AbstractService {
+  
   constructor(
     private readonly eventEmitter: EventEmitter2,
     @InjectRepository(Transaction)
@@ -19,5 +20,9 @@ export class TransactionService extends AbstractService {
   async emitTransaction(transactionDto: TransactionDto) {
     this.eventEmitter.emit('transaction', { transactionDto });
     //await this.transactionsQueue.add(transactionDto.id, transactionDto);
+  }
+  
+  verifyTransaction(transactionId: string) {
+    throw new Error('Method not implemented.');
   }
 }

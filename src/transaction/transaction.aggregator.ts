@@ -85,11 +85,11 @@ export class TransactionAggregator {
     transactionDto: TransactionDto,
   ): Promise<Transaction> {
     const data = `${transactionDto.id}-${transactionDto.type}-${transactionDto.fundSymbol}-${transactionDto.date}-${transactionDto.price}`;
-    const hash = SHA256(data);
+    const leaf = SHA256(data);
     // Store transaction entity in the database
     const transactionEntity = await this.transactionRepo.save({
       transactionId: transactionDto.id,
-      hash: hash,
+      leaf: leaf,
     });
     return transactionEntity;
   }

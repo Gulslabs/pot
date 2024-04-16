@@ -15,6 +15,7 @@ export class TransactionController {
   }
   @Get('transactions/:TRANSACTION_ID')
   async verifyTransaction(@Param('TRANSACTION_ID') transactionId: string) {
+    await this.transactionService.verifyTransaction(transactionId);
     return {blockChainStatus: false};
   }
 }

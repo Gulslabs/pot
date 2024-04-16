@@ -8,7 +8,7 @@ export class Transaction extends BaseEntity {
   transactionId: string;
 
   @Column()
-  hash: string;
+  leaf: string;
 
   @Column('simple-json', { nullable: true })
   proofs: string;

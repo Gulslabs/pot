@@ -17,7 +17,7 @@ export class BlockProcessor {
     console.log(`Block Received: ${JSON.stringify(block)}`);
     // Extract transaction hashes
     const transactionHashes = block.transactions.map(
-      (transaction) => transaction.hash,
+      (transaction) => transaction.leaf,
     );
     console.log(`Transaction Hashes ${transactionHashes}`);
     const merkleTree = new MerkleTree(transactionHashes, SHA256);
@@ -30,7 +30,7 @@ export class BlockProcessor {
     merkleTree: any,
   ) {
     for (const transaction of blockDto.transactions) {
-      const proofs = merkleTree.getProof(transaction.hash);
+      const proofs = merkleTree.getProof(transaction.leaf);
 
       await this.transactionService.update(
         { id: transaction.id },

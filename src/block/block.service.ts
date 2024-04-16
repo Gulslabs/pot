@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { BlockProcessor } from './block.processor';
 import { BlockDto } from './dtos/block.dto';
 import { Block } from './entities/block.entity';
+import MerkleTree from 'merkletreejs';
 
 @Injectable()
 export class BlockService extends AbstractService {
@@ -31,7 +32,7 @@ export class BlockService extends AbstractService {
   async consumeBlock(blockDto: BlockDto) {
     const merkleTree = this.blockProcessor.createMekleTree(blockDto);
     const block = await this.saveBlock(
-      merkleTree.getRoot().toString('hex'),
+      merkleTree,
       blockDto.blockId.toString(),
     );
     await this.blockProcessor.updateBlockTransaction(blockDto, block, merkleTree);
@@ -42,11 +43,11 @@ export class BlockService extends AbstractService {
    * @param merkleRoot
    * @param blockId
    */
-  private async saveBlock(merkleRoot: string, blockId: string): Promise<Block> {
+  private async saveBlock(merkleTree: MerkleTree, blockId: string): Promise<Block> {
     // Persist block entity
     const blockEntity = this.blockRepository.create({
       blockId: blockId,
-      merkleRoot: merkleRoot,
+      merkleTree: merkleTree.toString()
     });
     return await this.blockRepository.save(blockEntity);
   }
