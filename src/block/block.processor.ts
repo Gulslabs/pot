@@ -3,6 +3,7 @@ import * as SHA256 from 'crypto-js/sha256';
 import { MerkleTree } from 'merkletreejs';
 import { BlockDto } from './dtos/block.dto';
 import { TransactionService } from 'src/transaction/transation.service';
+import { Block } from './entities/block.entity';
 @Injectable()
 export class BlockProcessor {
   constructor(private readonly transactionService: TransactionService) {}
@@ -17,20 +18,24 @@ export class BlockProcessor {
     // Extract transaction hashes
     const transactionHashes = block.transactions.map(
       (transaction) => transaction.hash,
-    );    
+    );
     console.log(`Transaction Hashes ${transactionHashes}`);
-    const merkleTree = new MerkleTree(transactionHashes, SHA256)        
+    const merkleTree = new MerkleTree(transactionHashes, SHA256);
     return merkleTree;
   }
 
-  async updateBlockTransaction(block: BlockDto, merkleTree: any) {
-    for (const transaction of block.transactions) {
+  async updateBlockTransaction(
+    blockDto: BlockDto,
+    block: Block,
+    merkleTree: any,
+  ) {
+    for (const transaction of blockDto.transactions) {
       const proofs = merkleTree.getProof(transaction.hash);
 
-       await this.transactionService.update(
-         { id: transaction.id },
-         { proofs: proofs, blockId: block.blockId },
-       );
+      await this.transactionService.update(
+        { id: transaction.id },
+        { proofs: proofs, block: block},
+      );
     }
   }
 

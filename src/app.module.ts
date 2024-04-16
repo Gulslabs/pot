@@ -1,6 +1,5 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockModule } from './block/block.module';
@@ -23,19 +22,19 @@ import { TransactionModule } from './transaction/transaction.module';
     }),
     ConfigModule.forRoot(),
     EventEmitterModule.forRoot(),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        connection: {
-          host: configService.get<string>('REDIS_HOST', 'localhost'),
-          port: configService.get<number>('REDIS_PORT', 6379),
-          lazyConnect: true,
-          keepAlive: 1000,
-          connectTimeout: 1000,
-        },
-      }),
-    }),    
+    // BullModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     connection: {
+    //       host: configService.get<string>('REDIS_HOST', 'localhost'),
+    //       port: configService.get<number>('REDIS_PORT', 6379),
+    //       lazyConnect: true,
+    //       keepAlive: 1000,
+    //       connectTimeout: 1000,
+    //     },
+    //   }),
+    // }),    
     BlockModule,
     TransactionModule,
   ],

@@ -1,5 +1,6 @@
+import { Block } from 'src/block/entities/block.entity';
 import { BaseEntity } from 'src/shared/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Transaction extends BaseEntity {
@@ -11,7 +12,7 @@ export class Transaction extends BaseEntity {
 
   @Column('simple-json', { nullable: true })
   proofs: string;
-
-  @Column({ nullable: true })
-  blockId: number;
+  
+  @ManyToOne(() => Block, (block) => block.id, { nullable: true })
+  block: Block;
 }
