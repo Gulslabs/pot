@@ -8,7 +8,7 @@ export class TransactionDto {
   type: 'buy' | 'sell';
 
   @ApiProperty({description: "Security Identifier"})  
-  fundSymbol: string;
+  identifier: string;
 
   @ApiProperty({description: "Transaction Execution Date/Time"})  
   date: Date;

@@ -1,12 +1,11 @@
-import { Process, Processor } from '@nestjs/bull';
+import { Processor } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
-import { Job } from 'bull';
-import { TransactionDto } from './dtos/transaction.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as SHA256 from 'crypto-js/sha256';
 import { Repository } from 'typeorm';
+import { TransactionDto } from './dtos/transaction.dto';
 import { Transaction } from './entities/transaction.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 @Processor('transactions')
@@ -70,7 +69,7 @@ export class TransactionAggregator {
       blockId: this.blockId++,
       transactions: transactions,
     };
-    console.log(`Block being Emitted: ${JSON.stringify(block)}`);
+   // console.log(`Block being Emitted: ${JSON.stringify(block)}`);
     this.eventEmitter.emit('block', { block });
     this.transactionDtos = [];
     clearTimeout(this.timer);
@@ -84,13 +83,11 @@ export class TransactionAggregator {
   private async hashTransactionAndSave(
     transactionDto: TransactionDto,
   ): Promise<Transaction> {
-    const data = `${transactionDto.id}-${transactionDto.type}-${transactionDto.fundSymbol}-${transactionDto.date}-${transactionDto.price}`;
-    const leaf = SHA256(data);
+    const data = `${transactionDto.id}-${transactionDto.type}-${transactionDto.identifier}-${transactionDto.date}-${transactionDto.price}`;    
     // Store transaction entity in the database
-    const transactionEntity = await this.transactionRepo.save({
-      transactionId: transactionDto.id,
-      leaf: leaf,
-    });
-    return transactionEntity;
+    const transactionEntity = new Transaction();
+    transactionEntity.transactionId = transactionDto.id; 
+    transactionEntity.leaf =  SHA256(data).toString();
+    return await this.transactionRepo.save(transactionEntity); 
   }
 }

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import MerkleTree from 'merkletreejs';
 import { AbstractService } from 'src/shared/abstract.service';
 import { Repository } from 'typeorm';
 import { TransactionDto } from './dtos/transaction.dto';
 import { Transaction } from './entities/transaction.entity';
-import MerkleTree from 'merkletreejs';
 
 @Injectable()
 export class TransactionService extends AbstractService {
@@ -22,7 +22,7 @@ export class TransactionService extends AbstractService {
     //await this.transactionsQueue.add(transactionDto.id, transactionDto);
   }
 
-  async verifyTransaction(transactionId: string): Promise<boolean>  {
+  async verifyTransaction(transactionId: string): Promise<boolean> {
     // 1. Retrieve one Transaction ; its proof, leaf
     // 2. Retrieve Block, get merkleTree and proof.
     const transaction = await this.transactionRepo.findOne({
@@ -34,17 +34,19 @@ export class TransactionService extends AbstractService {
       },
     });
     if (!transaction) {
-      throw new Error(
-        `Unable to retrieve Transaction. TransactionId: ${transactionId}`,
-      );
+      throw new BadRequestException('Invalid Request', {
+        cause: new Error(),
+        description: `Unable to retrieve Transaction. TransactionId: ${transactionId}`,
+      });
     }
-    console.log(`Transaction Retrieved: ${JSON.stringify(transaction)}`);
+    //console.log(`Transaction Retrieved: ${JSON.stringify(transaction)}`);
     const root = Buffer.from(transaction.block.root, 'hex');
     const leaf = Buffer.from(transaction.leaf, 'hex');
     const proofs = transaction.proofs.map((p) => Buffer.from(p, 'hex'));
     const tree = new MerkleTree([root]);
-    console.log(`Root: ${root}, Leaf: ${leaf}, Proofs: ${proofs}, tree: ${tree.toString()}`);
-
+    console.log(
+      `Root: ${root}, Leaf: ${leaf}, Proofs: ${proofs}, tree: ${tree.toString()}`,
+    );
     return tree.verify(proofs, leaf, root);
   }
 }

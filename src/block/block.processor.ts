@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import * as SHA256 from 'crypto-js/sha256';
 import { MerkleTree } from 'merkletreejs';
-import { BlockDto } from './dtos/block.dto';
 import { TransactionService } from 'src/transaction/transation.service';
+import { BlockDto } from './dtos/block.dto';
 import { Block } from './entities/block.entity';
 @Injectable()
 export class BlockProcessor {
@@ -19,8 +18,8 @@ export class BlockProcessor {
     const transactionHashes = block.transactions.map(
       (transaction) => transaction.leaf,
     );
-    console.log(`Transaction Hashes ${transactionHashes}`);
-    const merkleTree = new MerkleTree(transactionHashes, SHA256);
+    //console.log(`Transaction Hashes ${transactionHashes}`);
+    const merkleTree = new MerkleTree(transactionHashes);
     return merkleTree;
   }
 
